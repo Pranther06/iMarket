@@ -121,40 +121,47 @@ struct CartView: View {
                         Spacer()
                         
                         Button(action: {
-                            showPrice.toggle()
+                            withAnimation {
+                                showPrice.toggle()
+                            }
                         }, label:{
-                            Image(systemName: showPrice ? "chevron.up" : "chevron.down")
+                            Image(systemName: "chevron.down")
                                 .foregroundColor(.primary)
                                 .bold()
+                                .rotationEffect(.degrees(showPrice ? -180 : 0))
+                                .animation(.easeInOut, value: showPrice)
                         })
                     }
                     .padding(.bottom, 5)
+                    
                     Text("\(cartProducts.count) Items")
                         .foregroundColor(.gray)
                     
-                    //Show entire price breakdown
+                    // Show entire price breakdown
                     if showPrice {
                         Divider()
-                        HStack{
-                            Text("Subtotal")
-                                .foregroundColor(.gray)
-                            Spacer()
-                            Text("$\(subtotalPrice, specifier: "%.2f")")
+                        VStack {
+                            HStack{
+                                Text("Subtotal")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text("$\(subtotalPrice, specifier: "%.2f")")
+                            }
+                            HStack{
+                                Text("Savings")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text("$\(totalDiscount, specifier: "%.2f")")
+                            }
+                            HStack{
+                                Text("Taxes")
+                                    .foregroundColor(.gray)
+                                Spacer()
+                                Text("$\(taxPrice, specifier: "%.2f")")
+                            }
                         }
-                        HStack{
-                            Text("Savings")
-                                .foregroundColor(.gray)
-                            Spacer()
-                            Text("$\(totalDiscount, specifier: "%.2f")")
-                        }
-                        HStack{
-                            Text("Taxes")
-                                .foregroundColor(.gray)
-                            Spacer()
-                            Text("$\(taxPrice, specifier: "%.2f")")
-                        }
+                        .transition(.opacity)
                     }
-                    
                 }
                 .padding()
                 .background(Color(.systemGray4))
