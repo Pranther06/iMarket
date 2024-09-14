@@ -12,6 +12,7 @@ struct ContentView: View {
     @State private var products: [Product] = []
     @State private var cartProducts: [Product] = []
     
+    
     var body: some View {
         TabView {
             //Main product view

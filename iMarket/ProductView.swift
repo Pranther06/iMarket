@@ -170,6 +170,10 @@ struct ProductView: View {
                 .padding(.bottom)
             }
             .padding(.horizontal)
+            .onAppear {
+                //Set product to viewed
+                product.viewed = true
+            }
         }
         .navigationTitle(product.title)
         .navigationBarTitleDisplayMode(.inline)

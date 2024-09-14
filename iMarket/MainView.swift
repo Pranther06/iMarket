@@ -31,8 +31,62 @@ struct MainView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
+                
+                //Search term empty
+                if (isEditing && searchTerm.isEmpty) {
+                    
+                    //Checks if there are recently viewed products
+                    if products.allSatisfy({ $0.viewed == false }) {
+                        ZStack {
+                            Spacer().containerRelativeFrame([.horizontal, .vertical])
+                            VStack{
+                                Image(systemName: "magnifyingglass")
+                                    .font(.system(size: 40))
+                                    .bold()
+                                    .padding(.bottom)
+                                Text("No Results")
+                                Text("Check the spelling or try a new search.")
+                            }
+                        }
+                    }
+                    else {
+                        HStack {
+                            Text("Recently Viewed")
+                            Spacer()
+                        }
+                        .padding(.leading)
+                        .padding(.vertical, 10)
+                        .bold()
+                        
+                        //Filter products that have viewed set to true and pass binding product
+                        ForEach(products.indices.filter { products[$0].viewed == true }, id: \.self) { index in
+                            
+                            //Navigation button to product page
+                            NavigationLink(destination: ProductView(product: $products[index], cartProducts: $cartProducts)) {
+                                HStack {
+                                    
+                                    //Display thumbnail and title
+                                    AsyncImage(url: URL(string: products[index].thumbnail)) { image in
+                                        image.resizable()
+                                    } placeholder: {
+                                        ProgressView()
+                                    }
+                                    .frame(width: 50, height: 50)
+                                    
+                                    Text(products[index].title)
+                                        .foregroundColor(.primary)
+                                    
+                                    Spacer()
+                                }
+                                .padding(.leading)
+                            }
+                        }
+                    }
+                    
+                }
+                
                 //No items found
-                if ((isEditing && searchTerm.isEmpty) || (isEditing && filteredProducts.isEmpty) || filteredProducts.isEmpty) {
+                else if filteredProducts.isEmpty {
                     ZStack {
                         Spacer().containerRelativeFrame([.horizontal, .vertical])
                         VStack{
@@ -148,9 +202,11 @@ struct Product: Identifiable, Codable {
     let meta: [String: String]
     let thumbnail: String
     let images: [String]
-    var favorite: Bool = false
     
-    //Exclude favorite from being decoded
+    var favorite: Bool = false
+    var viewed: Bool = false
+    
+    //Exclude favorite and viewed from being decoded
     private enum CodingKeys: String, CodingKey {
         case id, title, description, category, price, discountPercentage, rating, stock, tags, brand, sku, weight, dimensions, warrantyInformation, shippingInformation, availabilityStatus, reviews, returnPolicy, minimumOrderQuantity, meta, thumbnail, images
     }
