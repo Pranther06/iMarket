@@ -11,34 +11,30 @@ struct CartView: View {
     @State private var delivery = false
     @Binding var cartProducts: [Product]
     @State private var showPrice = false
+    
+    //Calculate price before tax and savings
+    var subtotalPrice: Double {
+        cartProducts.reduce(0) { sum, product in
+            return sum + product.price
+        }
+    }
 
     //Calculate total savings
     var totalDiscount: Double {
         cartProducts.reduce(0) { discountSum, product in
-            if let discount = product.discountPercentage, discount > 0 {
-                let discountAmount = product.price * (discount / 100)
-                return discountSum + discountAmount
-            } else {
-                return discountSum
-            }
+            let discountAmount = product.price * (product.discountPercentage / 100)
+            return discountSum + discountAmount
         }
     }
-    
-    //Calculate price before tax
-    var subtotalPrice: Double {
-        cartProducts.reduce(0) { sum, product in
-            if let discount = product.discountPercentage, discount > 0 {
-                let discountedPrice = product.price * (1 - discount / 100)
-                return sum + discountedPrice
-            } else {
-                return sum + product.price
-            }
-        }
+
+    //Calculate tax from subtotal
+    var taxPrice: Double {
+        return 0.0913 * subtotalPrice //Sales tax in Cupertino is 9.13%
     }
     
-    //Calculate price after tax
+    //Calculate total price from subtotal, discounts, and tax
     var totalPrice: Double {
-        return 1.0913 * subtotalPrice //Sales tax in Cupertino is 9.13%
+        return subtotalPrice - totalDiscount + taxPrice
     }
     
     
@@ -97,12 +93,12 @@ struct CartView: View {
                         Spacer()
                         
                         HStack {
-                            if let discount = product.discountPercentage, discount > 0 {
+                            if product.discountPercentage > 0 {
                                 Text("$\(product.price, specifier: "%.2f")")
                                     .strikethrough()
                                     .foregroundColor(.gray)
 
-                                let discountedPrice = product.price * (1 - discount / 100)
+                                let discountedPrice = product.price * (1 - product.discountPercentage / 100)
                                 Text("$\(discountedPrice, specifier: "%.2f")")
                                     .bold()
                                     .foregroundColor(.red)
@@ -155,7 +151,7 @@ struct CartView: View {
                             Text("Taxes")
                                 .foregroundColor(.gray)
                             Spacer()
-                            Text("$\(totalPrice, specifier: "%.2f")")
+                            Text("$\(taxPrice, specifier: "%.2f")")
                         }
                     }
                     

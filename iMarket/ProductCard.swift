@@ -37,12 +37,12 @@ struct ProductCard: View {
                     .lineLimit(1)
                 //Show discounted price if there is a discount
                 HStack {
-                    if let discount = product.discountPercentage, discount > 0 {
+                    if product.discountPercentage > 0 {
                         Text("$\(product.price, specifier: "%.2f")")
                             .strikethrough()
                             .foregroundColor(.gray)
 
-                        let discountedPrice = product.price * (1 - discount / 100)
+                        let discountedPrice = product.price * (1 - product.discountPercentage / 100)
                         Text("$\(discountedPrice, specifier: "%.2f")")
                             .bold()
                             .foregroundColor(.red)

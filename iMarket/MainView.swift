@@ -23,7 +23,7 @@ struct MainView: View {
                 product.title.lowercased().contains(searchTerm.lowercased()) ||
                 product.category.lowercased().contains(searchTerm.lowercased()) ||
                 (product.brand?.lowercased().contains(searchTerm.lowercased()) ?? false) ||
-                (product.tags?.contains { $0.lowercased().contains(searchTerm.lowercased()) } ?? false)
+                product.tags.contains { $0.lowercased().contains(searchTerm.lowercased()) }
             }
         }
     }
@@ -131,21 +131,21 @@ struct Product: Identifiable, Codable {
     let description: String
     let category: String
     let price: Double
-    let discountPercentage: Double?
+    let discountPercentage: Double
     let rating: Double
     let stock: Int
-    let tags: [String]?
+    let tags: [String]
     let brand: String?
-    let sku: String?
-    let weight: Double?
-    let dimensions: [String: Double]?
-    let warrantyInformation: String?
-    let shippingInformation: String?
-    let availabilityStatus: String?
+    let sku: String
+    let weight: Double
+    let dimensions: [String: Double]
+    let warrantyInformation: String
+    let shippingInformation: String
+    let availabilityStatus: String
     let reviews: [Review]
-    let returnPolicy: String?
-    let minimumOrderQuantity: Int?
-    let meta: [String: String]?
+    let returnPolicy: String
+    let minimumOrderQuantity: Int
+    let meta: [String: String]
     let thumbnail: String
     let images: [String]
     var favorite: Bool = false
